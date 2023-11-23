@@ -2,11 +2,13 @@ import React, { useState, useContext, useEffect } from 'react';
 import UserContext from '../../context/UserContext';
 import { useNavigate, useLocation } from "react-router-dom";
 import SideMenu from '../../components/SideMenu';
+import api from '../../service/generalService';
+import Swal from 'sweetalert2'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { icon } from '@fortawesome/fontawesome-svg-core/import.macro'
 
 const Dashboard = () => {
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const [registerDevice, setRegisterDevice]= useState(false);
   const [deviceCalling, setDeviceCalling] = useState(false);
   const [deviceId, setDeviceId] = useState('');
@@ -17,6 +19,7 @@ const Dashboard = () => {
 
 
   useEffect(() => {
+    console.log('user: ', user);
     if (!user) {
       navigate("/login")
     }
@@ -26,14 +29,46 @@ const Dashboard = () => {
     //get devices from api
   }, [reload]);
 
-  const handleSubmit = (event) => {
+  const updateUserContext = async () => {
+    const response = await api('/user/', 'GET');
+    for (const key in response.data) {
+      if (response.data.hasOwnProperty(key)) {
+        const element = response.data[key];
+        if (element.username === user.username) {
+          setUser(element);
+        }
+      }
+    }
+  }
+
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
     // Perform actions with deviceId, e.g., submit to API or perform necessary logic
     console.log('Device ID:', deviceId);
 
+    // await api(`/user/financial-manager?username=${user?.username}&month=${actualMonth}`, 'PUT', {
+    //   bankBalance: formatNumber(bankBalance),
+    //   savedMoney: formatNumber(savedMoney),
+    //   foodCost: formatNumber(foodCost),
+    //   houseCost: formatNumber(houseCost),
+    //   transportCost: formatNumber(transportCost),
+    //   date: new Date()
+    // })
+
+    await updateUserContext();
+
 
     // Reset the form or perform other actions after registration 
+    Swal.fire({
+      icon: 'success',
+      title: 'Dispositivo registrado com sucesso!',
+      showConfirmButton: false,
+      timer: 1500
+    }).then(() => {
+      navigate('/dashboard');
+    })
     setDeviceId('');
     setRegisterDevice(false);
     setIsLoading(false);
@@ -87,7 +122,7 @@ const Dashboard = () => {
               />
               <h1 className="text-[16px] font-bold font-dm-sans mt-2">{!deviceCalling ? 'Chamar Dispositivo' : ''}</h1>
               {deviceCalling && (
-                <p className="text-xs text-gray-500 mt-2">Chamando dispositivo...</p>
+                <p className="text-xs text-yellow-600 mt-2">Chamando dispositivo...</p>
               )}
             </div>
           </button>
