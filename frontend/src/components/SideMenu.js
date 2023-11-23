@@ -14,35 +14,19 @@ const SideMenu = () => {
         <aside className="flex flex-col min-h-screen ">
             <div className="bg-[#252525] w-72 min-h-screen items-center justify-center h-[100%]">
                 <img
-                    src="https://i.imgur.com/gkAgCgk.png"
-                    alt="Meu Porquinho logo"
-                    className="h-[150px] pl-24 pt-2 pb-2 content-center"
+                    src="https://i.imgur.com/UvOeYRa.png"
+                    alt="Logo Cadê a Chave?"
+                    className="h-[120px] pl-24 pt-4 pb-2 content-center"
                 />
                 <h1 className="text-2xl font-bold mb-2 text-center text-white font-dm-sans">
-                    MeuPorquinho.com
+                    Cadê a Chave?
                 </h1>
                 <ul className="pt-10 flex flex-col space-y-6 text-center">
                     <li>
                         <div className={location.pathname === '/dashboard' ? "bg-[#3F3F3F] h-16 flex items-center justify-center" : "bg-[#252525] h-16 flex items-center justify-center"}>
                             <FontAwesomeIcon icon={icon({ name: 'home' })} style={{ color: 'white' }} />
                             <button onClick={() => {navigate('/dashboard')}} className="pl-2 text-gray-300 hover:text-white text-lg font-dm-sans">
-                                Dashboard
-                            </button>
-                        </div>
-                    </li>
-                    <li>
-                        <div className={location.pathname === '/noticias' ? "bg-[#3F3F3F] h-16 flex items-center justify-center" : "bg-[#252525] h-16 flex items-center justify-center"}>
-                            <FontAwesomeIcon icon={icon({ name: 'newspaper' })} style={{ color: 'white' }} />
-                            <button onClick={() => {navigate('/news')}} className="pl-2 text-gray-300 hover:text-white text-lg font-dm-sans">
-                                Notícias
-                            </button>
-                        </div>
-                    </li>
-                    <li>
-                        <div className={location.pathname === '/manager' ? "bg-[#3F3F3F] h-16 flex items-center justify-center" : "bg-[#252525] h-16 flex items-center justify-center"}>
-                            <FontAwesomeIcon icon={icon({ name: 'user-cog' })} style={{ color: 'white' }} />
-                            <button onClick={() => {navigate('/manager')}} className="pl-2 text-gray-300 hover:text-white text-lg font-dm-sans">
-                                Gerenciador
+                                Dispositivos
                             </button>
                         </div>
                     </li>

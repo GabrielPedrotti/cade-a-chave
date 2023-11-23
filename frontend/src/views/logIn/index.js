@@ -87,7 +87,7 @@ const LogIn = () => {
             )}
             <button
               type="submit"
-              className="font-dm-sans mt-4 w-full py-2 bg-rose-300 text-white rounded-md font-bold text-lg hover:bg-rose-500 transition-colors"
+              className="font-dm-sans mt-4 w-full py-2 bg-yellow-300 text-white rounded-md font-bold text-lg hover:bg-yellow-500 transition-colors"
             >
               Entrar
             </button>

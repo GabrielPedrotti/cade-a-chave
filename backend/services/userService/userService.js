@@ -57,51 +57,60 @@ module.exports = {
         }
     },
 
-    async saveFinances(req, res) {
-        try {
-            const collection = await databaseConnect();
-            let { bankBalance, savedMoney, foodCost, houseCost, transportCost } = req.body;
-            const { username, month } = req.query;
+    //TODO: Create a function to register a new device
 
-            if (!username) {
-                return res.status(400).json({ message: 'Usuário não informado' });
-            }
+    // async saveFinances(req, res) {
+    //     try {
+    //         const collection = await databaseConnect();
+    //         let { bankBalance, savedMoney, foodCost, houseCost, transportCost } = req.body;
+    //         const { username, month } = req.query;
 
-            if (!month) {
-                return res.status(400).json({ message: 'Mês não informado' });
-            }
+    //         if (!username) {
+    //             return res.status(400).json({ message: 'Usuário não informado' });
+    //         }
 
-            const userInfo = await collection.findOne({ username });
-            const actualMonthFinances = userInfo && userInfo?.finances && userInfo?.finances[month] ? userInfo?.finances[month] : null;
+    //         if (!month) {
+    //             return res.status(400).json({ message: 'Mês não informado' });
+    //         }
 
-            if (actualMonthFinances) {
-                bankBalance = bankBalance + actualMonthFinances.bankBalance;
-                savedMoney = savedMoney + actualMonthFinances.savedMoney;
-                foodCost = foodCost + actualMonthFinances.foodCost;
-                houseCost = houseCost + actualMonthFinances.houseCost;
-                transportCost = transportCost + actualMonthFinances.transportCost;
-            }
+    //         const userInfo = await collection.findOne({ username });
+    //         const actualMonthFinances = userInfo && userInfo?.finances && userInfo?.finances[month] ? userInfo?.finances[month] : null;
 
-            await collection.updateOne({ username }, {
-                $set: {
-                    [`finances.${month}`]: {
-                        bankBalance,
-                        savedMoney,
-                        foodCost,
-                        houseCost,
-                        transportCost
-                    }
-                }
-            });
+    //         if (actualMonthFinances) {
+    //             bankBalance = bankBalance + actualMonthFinances.bankBalance;
+    //             savedMoney = savedMoney + actualMonthFinances.savedMoney;
+    //             foodCost = foodCost + actualMonthFinances.foodCost;
+    //             houseCost = houseCost + actualMonthFinances.houseCost;
+    //             transportCost = transportCost + actualMonthFinances.transportCost;
+    //         }
 
-            return res.status(200).json({ message: 'Finanças salvas com sucesso' });
-        } catch (error) {
-            console.error(error);
-            return res.status(500).json({ message: 'Erro ao salvar finanças' });
-        } finally {
-            await client.close();
-        }
-    },
+    //         await collection.updateOne({ username }, {
+    //             $set: {
+    //                 [`finances.${month}`]: {
+    //                     bankBalance,
+    //                     savedMoney,
+    //                     foodCost,
+    //                     houseCost,
+    //                     transportCost
+    //                 }
+    //             }
+    //         });
+
+    //         return res.status(200).json({ message: 'Finanças salvas com sucesso' });
+    //     } catch (error) {
+    //         console.error(error);
+    //         return res.status(500).json({ message: 'Erro ao salvar finanças' });
+    //     } finally {
+    //         await client.close();
+    //     }
+    // },
+
+
+    // TODO: create function to activate the device
+
+
+    // TODO: create funcion to verify if the user activated the device
+
 
     async getUsers(req, res) {
         try {
