@@ -51,9 +51,31 @@ module.exports = {
         }
     },
 
+    async getDevicesByUserId(req, res) {
+        try {
+            const { userId } = req.params;
+
+            if (!userId) return res.status(400).json({ message: 'ID do usuário inválido' });
+
+            const collection = await databaseConnect();
+            const devices = await collection.find({ userId }).toArray();
+
+            if (!devices) {
+                return res.status(404).json({ message: 'Dispositivos não encontrados' });
+            } else {
+                return res.status(200).json({ devices });
+            }
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ message: 'Erro ao buscar dispositivos' });
+        }
+    },
+
     async updateDeviceAlarm(req, res) {
         try {
             const { deviceId, ring } = req.params;
+
+            if (!parseInt(deviceId)) return res.status(400).json({ message: 'ID do dispositivo inválido' });
 
             const collection = await databaseConnect();
             const device = await collection.findOne({ deviceId });
