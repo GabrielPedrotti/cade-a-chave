@@ -6,7 +6,6 @@ import SignIn from "./views/signIn";
 import LogIn from "./views/logIn";
 import Dashboard from "./views/dashboard";
 import FinancialManager from "./views/financialManager";
-import News from "./views/news";
 
 const AppRoutes = () => {
     return (
