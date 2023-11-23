@@ -41,9 +41,14 @@ const Dashboard = () => {
   };
 
   const callDevice = (deviceId) => {
-    setDeviceCalling(true);
+    if(deviceCalling) {
+      // TODO: call device
+      console.log('Calling device: ', deviceId);
+    } else {
+      console.log('Device not calling');
+       // TODO: stop calling device
+    }
   }
-
 
   return (
     <div className="flex max-w-screen-sm">
@@ -60,23 +65,32 @@ const Dashboard = () => {
                 }
               }>
               <div className="flex flex-col justify-center items-center">
-                <FontAwesomeIcon icon={icon({ name: 'credit-card' })} size="3x" style={{ color: 'black' }} />
+                <FontAwesomeIcon icon={icon({ name: 'plus' })} size="3x" style={{ color: 'black' }} />
                 <h1 className="text-[16px] font-bold font-dm-sans w-28 mt-4">Registrar Novo Dispositivo!</h1>
               </div>
             </button>
           </div>
           <div className="flex flex-row flex-wrap items-center">
-            <button className="w-[240px] h-[200px] bg-white rounded-xl shadow-lg m-5 flex justify-center items-center focus:outline-none border border-gray-300 hover:shadow-xl"
-              onClick={() => {
-                  callDevice('1')
-                }
-              }>
-              <div className="flex flex-col justify-center items-center">
-                <h1 className="text-[16px] font-bold font-dm-sans w-28 mt-4 mb-2">Dispositivo 1</h1>
-                  <FontAwesomeIcon icon={icon({ name: 'credit-card' })} size="3x" style={{ color: 'black' }} />
-                <h1 className="text-[16px] font-bold font-dm-sans w-28 mt-4">Chamar Dispositivo</h1>
-              </div>
-            </button>
+          <button
+            className="w-[240px] h-[200px] bg-white rounded-xl shadow-lg m-5 flex justify-center items-center focus:outline-none border border-gray-300 hover:shadow-xl"
+            onClick={() => {
+              setDeviceCalling(!deviceCalling);
+              callDevice('1');
+            }}
+          >
+            <div className="flex flex-col justify-center items-center">
+              <h1 className="text-[16px] font-bold font-dm-sans w-28 mb-2">Dispositivo 1</h1>
+              <img
+                  src="https://i.imgur.com/epssJQk.png"
+                  alt="Dispositivo 1"
+                  className="h-[120px] pb-2 content-center"
+              />
+              <h1 className="text-[16px] font-bold font-dm-sans mt-2">{!deviceCalling ? 'Chamar Dispositivo' : ''}</h1>
+              {deviceCalling && (
+                <p className="text-xs text-gray-500 mt-2">Chamando dispositivo...</p>
+              )}
+            </div>
+          </button>
           </div>
         </div>
         {registerDevice && (
