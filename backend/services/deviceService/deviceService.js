@@ -34,11 +34,11 @@ module.exports = {
     async getDeviceById(req, res) {
         try {
             const { deviceId } = req.params;
-            console.log('deviceId AA', deviceId)
+
+            if (!parseInt(deviceId)) return res.status(400).json({ message: 'ID do dispositivo inválido' });
 
             const collection = await databaseConnect();
-            const device = await collection.findOne({ deviceId });
-            console.log('device', device)
+            const device = await collection.findOne({ deviceId: parseInt(deviceId) });
 
             if (!device) {
                 return res.status(404).json({ message: 'Dispositivo não encontrado' });
