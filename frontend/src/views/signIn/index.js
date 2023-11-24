@@ -40,11 +40,6 @@ const RegistrationPage = () => {
       return;
     }
 
-    const lgpdTermsAccepted = await lgpdTermsModal(e.target.elements);
-    if (!lgpdTermsAccepted) {
-      return;
-    };
-
     try {
       const response = await api('/user/register', 'POST', {
         "username": e.target.elements.email.value,
@@ -68,34 +63,6 @@ const RegistrationPage = () => {
       })
       setErrorRequest(true);
     }
-  }
-
-  const lgpdTermsModal = async (data) => {
-    const accepted = await Swal.fire({
-      title: '<strong class="text-white">Termos de Uso</strong>',
-      titleColor: '#fff',
-      html: `
-        <div class="text-left">
-          <iframe src="https://docs.google.com/viewer?srcid=1oVvY4BG7pxM__kvLaCzZYFA1NITu55e-9gnSPg41H4s&pid=explorer&efh=false&a=v&chrome=false&embedded=true" style="width:100%; height:400px;" frameborder="0"></iframe> 
-        </div>
-      `,
-      confirmButtonText: 'Aceitar',
-      confirmButtonColor: 'green',
-      showCancelButton: true,
-      cancelButtonText: 'Recusar',
-      cancelButtonColor: 'red',
-      width: '800px',
-      padding: '20px',
-      background: 'black',
-
-    }).then((result) => {
-      if (result.isConfirmed) {
-        return true
-      }
-      return false
-    })
-
-    return accepted
   }
 
   return (
