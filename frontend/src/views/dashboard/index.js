@@ -14,75 +14,84 @@ const Dashboard = () => {
   const [deviceId, setDeviceId] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [reload, setReload] = useState(false);
+  const [devices, setDevices] = useState([]);
+  const [isRinging, setIsRinging] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
 
 
   useEffect(() => {
-    console.log('user: ', user);
     if (!user) {
-      navigate("/login")
+      navigate("/login");
+      return;
     }
+
+    const fetchData = async () => {
+      console.log('user: ', user);
+      if (user) {
+        try {
+          const devices = await getUserDevices();
+          setDevices(devices.data.devices);
+        } catch (error) {
+          // Handle error fetching devices
+          console.error('Error fetching devices:', error);
+        }
+      }
+    };
+  
+    fetchData();
   }, [user, navigate]);
 
   useEffect(() => {
     //get devices from api
   }, [reload]);
 
-  const updateUserContext = async () => {
-    const response = await api('/user/', 'GET');
-    for (const key in response.data) {
-      if (response.data.hasOwnProperty(key)) {
-        const element = response.data[key];
-        if (element.username === user.username) {
-          setUser(element);
-        }
-      }
-    }
+  const getUserDevices = async () => {
+    const userDevices = await api(`/device/userId/${user?._id}`, 'GET');
+    return userDevices;
   }
-
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
     // Perform actions with deviceId, e.g., submit to API or perform necessary logic
-    console.log('Device ID:', deviceId);
 
-    // await api(`/user/financial-manager?username=${user?.username}&month=${actualMonth}`, 'PUT', {
-    //   bankBalance: formatNumber(bankBalance),
-    //   savedMoney: formatNumber(savedMoney),
-    //   foodCost: formatNumber(foodCost),
-    //   houseCost: formatNumber(houseCost),
-    //   transportCost: formatNumber(transportCost),
-    //   date: new Date()
-    // })
-
-    await updateUserContext();
-
-
-    // Reset the form or perform other actions after registration 
-    Swal.fire({
-      icon: 'success',
-      title: 'Dispositivo registrado com sucesso!',
-      showConfirmButton: false,
-      timer: 1500
-    }).then(() => {
-      navigate('/dashboard');
-    })
-    setDeviceId('');
-    setRegisterDevice(false);
-    setIsLoading(false);
-    setReload(true);
+    try {
+      await api(`/device`, 'post', {
+        userId: user._id,
+        deviceId: deviceId
+      })
+  
+      setDevices((await getUserDevices()).data.devices);
+  
+      Swal.fire({
+        icon: 'success',
+        title: 'Dispositivo registrado com sucesso!',
+        showConfirmButton: false,
+        timer: 1500
+      }).then(() => {
+        navigate('/dashboard');
+      })
+      setDeviceId('');
+      setRegisterDevice(false);
+      setIsLoading(false);
+      setReload(true);
+      
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Erro ao registrar dispositivo!',
+      })
+      setDeviceId('');
+      setRegisterDevice(false);
+      setIsLoading(false);
+      setReload(true);
+    }
   };
 
-  const callDevice = (deviceId) => {
-    if(deviceCalling) {
-      // TODO: call device
-      console.log('Calling device: ', deviceId);
-    } else {
-      console.log('Device not calling');
-       // TODO: stop calling device
-    }
+  const ringDevice = async (deviceId, ring) => {
+    await api(`/device/${deviceId}/${ring}`, 'PUT');
   }
 
   return (
@@ -105,28 +114,32 @@ const Dashboard = () => {
               </div>
             </button>
           </div>
-          <div className="flex flex-row flex-wrap items-center">
-          <button
-            className="w-[240px] h-[200px] bg-white rounded-xl shadow-lg m-5 flex justify-center items-center focus:outline-none border border-gray-300 hover:shadow-xl"
-            onClick={() => {
-              setDeviceCalling(!deviceCalling);
-              callDevice('1');
-            }}
-          >
-            <div className="flex flex-col justify-center items-center">
-              <h1 className="text-[16px] font-bold font-dm-sans w-28 mb-2">Dispositivo 1</h1>
-              <img
-                  src="https://i.imgur.com/epssJQk.png"
-                  alt="Dispositivo 1"
-                  className="h-[120px] pb-2 content-center"
-              />
-              <h1 className="text-[16px] font-bold font-dm-sans mt-2">{!deviceCalling ? 'Chamar Dispositivo' : ''}</h1>
-              {deviceCalling && (
-                <p className="text-xs text-yellow-600 mt-2">Chamando dispositivo...</p>
-              )}
+          {devices.length > 0 ? devices.map((device, index) => (
+            <div key={index} className="flex flex-row flex-wrap items-center">
+              <button
+                className="w-[240px] h-[200px] bg-white rounded-xl shadow-lg m-5 flex justify-center items-center focus:outline-none border border-gray-300 hover:shadow-xl"
+                onClick={async () => {
+                  setIsRinging(prevDeviceId => (prevDeviceId === device.deviceId ? null : device.deviceId));
+                  await ringDevice(device.deviceId, isRinging === device.deviceId ? false : true);
+                }}
+              > 
+                <div className="flex flex-col justify-center items-center">
+                  <h1 className="text-[16px] font-bold font-dm-sans w-28 mb-2">Dispositivo {index + 1}</h1>
+                  <img
+                      src="https://i.imgur.com/epssJQk.png"
+                      alt={`Dispositivo ${index + 1}`}
+                      className="h-[120px] pb-2 content-center"
+                  />
+                  <h1 className="text-[16px] font-bold font-dm-sans mt-2">
+                    {isRinging === device.deviceId ? null : 'Chamar Dispositivo'}
+                  </h1>
+                  {isRinging === device.deviceId && (
+                    <p className="text-xs text-yellow-600 mt-2">Chamando dispositivo...</p>
+                  )}
+                </div>
+              </button>
             </div>
-          </button>
-          </div>
+          )) : null}
         </div>
         {registerDevice && (
           <div className="mt-5">
