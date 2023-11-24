@@ -16,10 +16,12 @@ module.exports = {
             const collection = await databaseConnect();
             const deviceExists = await collection.findOne({ deviceId });
 
+            if (!parseInt(deviceId)) return res.status(400).json({ message: 'ID do dispositivo inválido' });
+            
             if (deviceExists) {
                 return res.status(409).json({ message: 'ID do dispositivo já está em uso!' });
             } else {
-                const response = await collection.insertOne({ deviceId, userId, ring: false, lastRingAt: null, registeredAt: new Date() });
+                const response = await collection.insertOne({ deviceId: parseInt(deviceId), userId, ring: false, lastRingAt: null, registeredAt: new Date() });
 
                 return res.status(201).json({ response, message: 'Dispositvo cadastrado com sucesso' });
             }
