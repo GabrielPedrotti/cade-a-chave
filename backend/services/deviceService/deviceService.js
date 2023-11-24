@@ -80,7 +80,7 @@ module.exports = {
             if (!parseInt(deviceId)) return res.status(400).json({ message: 'ID do dispositivo inválido' });
 
             const collection = await databaseConnect();
-            const device = await collection.findOne({ deviceId });
+            const device = await collection.findOne({ deviceId: parseInt(deviceId) });
 
             if (!device) {
                 return res.status(404).json({ message: 'Dispositivo não encontrado' });
