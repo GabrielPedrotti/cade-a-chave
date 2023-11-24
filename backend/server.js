@@ -15,6 +15,10 @@ connection.once('open', () => {
     console.log("MongoDB database connection established successfully");
 })
 
+app.get('/', (req, res) => {
+    res.json({ 'message': 'ok' });
+})
+
 app.use(express.json());
 app.use(cors(), routes);
 app.listen(port, () => {
