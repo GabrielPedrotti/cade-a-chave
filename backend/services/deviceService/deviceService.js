@@ -17,14 +17,13 @@ module.exports = {
             const deviceExists = await collection.findOne({ deviceId });
 
             if (!parseInt(deviceId)) return res.status(400).json({ message: 'ID do dispositivo inválido' });
-            
             if (deviceExists) {
                 return res.status(409).json({ message: 'ID do dispositivo já está em uso!' });
-            } else {
-                const response = await collection.insertOne({ deviceId: parseInt(deviceId), userId, ring: false, lastRingAt: null, registeredAt: new Date() });
-
-                return res.status(201).json({ response, message: 'Dispositvo cadastrado com sucesso' });
             }
+
+            const response = await collection.insertOne({ deviceId: parseInt(deviceId), userId, ring: false, lastRingAt: null, registeredAt: new Date() });
+
+            return res.status(201).json({ response, message: 'Dispositivo cadastrado com sucesso' });
         } catch (error) {
             console.error(error);
             return res.status(500).json({ message: 'Erro ao cadastrar dispositivo' });
@@ -44,9 +43,9 @@ module.exports = {
 
             if (!device) {
                 return res.status(404).json({ message: 'Dispositivo não encontrado' });
-            } else {
-                return res.status(200).json({ device });
             }
+
+            return res.status(200).json({ device });
         } catch (error) {
             console.error(error);
             return res.status(500).json({ message: 'Erro ao buscar dispositivo' });
@@ -64,9 +63,9 @@ module.exports = {
 
             if (!devices) {
                 return res.status(404).json({ message: 'Dispositivos não encontrados' });
-            } else {
-                return res.status(200).json({ devices });
             }
+
+            return res.status(200).json({ devices });
         } catch (error) {
             console.error(error);
             return res.status(500).json({ message: 'Erro ao buscar dispositivos' });
@@ -84,14 +83,17 @@ module.exports = {
 
             if (!device) {
                 return res.status(404).json({ message: 'Dispositivo não encontrado' });
-            } else {
-                const data = { ring };
-                if (ring) data.lastRingAt = new Date();
-
-                const response = await collection.updateOne({ deviceId }, { $set: data });
-
-                return res.status(200).json({ response, message: 'Dispositvo atualizado' });
             }
+
+            const data = { ring: ring === 'true' ? true : false };
+
+            if (data.ring) {
+                data.lastRingAt = new Date();
+            }
+
+            const response = await collection.updateOne({ deviceId: parseInt(deviceId) }, { $set: data });
+
+            return res.status(200).json({ response, message: `Dispositivo '${deviceId}' atualizado` });
         } catch (error) {
             console.error(error);
             return res.status(500).json({ message: 'Erro ao atualizar dispositivo' });
